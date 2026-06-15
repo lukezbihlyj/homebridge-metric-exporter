@@ -1,8 +1,8 @@
 import { API } from 'homebridge';
 
 import { PLATFORM_NAME } from './settings';
-import { GrafanaExporterPlatform } from './platform';
+import { MetricExporterPlatform } from './platform';
 
 export = (api: API) => {
-  api.registerPlatform(PLATFORM_NAME, GrafanaExporterPlatform);
+  api.registerPlatform(PLATFORM_NAME, MetricExporterPlatform);
 };

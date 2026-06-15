@@ -1,6 +1,6 @@
-# Homebridge Grafana Exporter
+# Homebridge Metric Exporter
 
-A [Homebridge](https://homebridge.io) plugin that exports accessory data (temperature, humidity, and more) to Grafana-compatible data sources. Perfect for visualizing your thermostat and sensor data in Grafana dashboards.
+A [Homebridge](https://homebridge.io) plugin that exports accessory data (temperature, humidity, and more) to time-series databases. Perfect for visualizing your thermostat and sensor data in Grafana or other dashboard tools.
 
 ## Supported Data Sources
 
@@ -13,7 +13,8 @@ A [Homebridge](https://homebridge.io) plugin that exports accessory data (temper
 ## Features
 
 - Export temperature, humidity, and other numeric characteristics from any Homebridge accessory
-- Config-based allow list — choose exactly which accessories to export
+- Config-based allow list — choose exactly which accessories to export (or leave empty to export all)
+- Stable accessory ID tag — data continuity preserved even if accessory names change
 - Automatic characteristic detection — reads any numeric characteristic available on the accessory
 - Supports InfluxDB v2, Graphite, and PostgreSQL as data sources
 - Configurable poll interval
@@ -23,14 +24,14 @@ A [Homebridge](https://homebridge.io) plugin that exports accessory data (temper
 
 ### Via Homebridge UI (Recommended)
 
-1. Search for `homebridge-grafana-exporter` in the Homebridge UI plugin search
+1. Search for `homebridge-metric-exporter` in the Homebridge UI plugin search
 2. Click Install
 3. Configure your data source and accessory list
 
 ### Via Command Line
 
 ```bash
-npm install -g homebridge-grafana-exporter
+npm install -g homebridge-metric-exporter
 ```
 
 ## Configuration
@@ -43,8 +44,8 @@ Add the platform to your Homebridge `config.json`:
 {
   "platforms": [
     {
-      "platform": "GrafanaExporter",
-      "name": "Grafana Exporter",
+      "platform": "MetricExporter",
+      "name": "Metric Exporter",
       "datasourceType": "influxdb",
       "influxdb": {
         "url": "http://localhost:8086",
@@ -53,10 +54,7 @@ Add the platform to your Homebridge `config.json`:
         "bucket": "homebridge",
         "measurement": "homebridge"
       },
-      "accessories": [
-        { "name": "Living Room Thermostat" },
-        { "name": "Bedroom Sensor" }
-      ],
+      "accessories": ["Living Room Thermostat", "Bedroom Sensor"],
       "pollInterval": 10
     }
   ]
@@ -69,17 +67,15 @@ Add the platform to your Homebridge `config.json`:
 {
   "platforms": [
     {
-      "platform": "GrafanaExporter",
-      "name": "Grafana Exporter",
+      "platform": "MetricExporter",
+      "name": "Metric Exporter",
       "datasourceType": "graphite",
       "graphite": {
         "host": "localhost",
         "port": 2003,
         "prefix": "homebridge"
       },
-      "accessories": [
-        { "name": "Living Room Thermostat" }
-      ],
+      "accessories": ["Living Room Thermostat"],
       "pollInterval": 10
     }
   ]
@@ -92,8 +88,8 @@ Add the platform to your Homebridge `config.json`:
 {
   "platforms": [
     {
-      "platform": "GrafanaExporter",
-      "name": "Grafana Exporter",
+      "platform": "MetricExporter",
+      "name": "Metric Exporter",
       "datasourceType": "postgresql",
       "postgresql": {
         "host": "localhost",
@@ -103,9 +99,7 @@ Add the platform to your Homebridge `config.json`:
         "password": "your-password",
         "table": "homebridge_metrics"
       },
-      "accessories": [
-        { "name": "Living Room Thermostat" }
-      ],
+      "accessories": ["Living Room Thermostat"],
       "pollInterval": 10
     }
   ]
@@ -117,8 +111,9 @@ Add the platform to your Homebridge `config.json`:
 | Option | Required | Default | Description |
 |--------|----------|---------|-------------|
 | `datasourceType` | Yes | "influxdb" | Data source: "influxdb", "graphite", or "postgresql" |
-| `accessories` | Yes | - | Array of objects with `name` property matching accessory display names |
-| `name` | No | "Grafana Exporter" | Platform name shown in logs |
+| `accessories` | No | [] | Array of accessory display names to export. Leave empty to export all. |
+| `name` | No | "Metric Exporter" | Platform name shown in logs |
+| `pin` | No | "031-45-154" | Homebridge PIN for HAP discovery |
 | `pollInterval` | No | 10 | How often to read and export values (seconds) |
 | `debugmode` | No | false | Enable debug logging |
 
@@ -169,7 +164,7 @@ The plugin automatically reads numeric and boolean characteristics from matched 
 | Motion Detected | `motion_detected` | Number (0/1) |
 | On (switches/outlets) | `on` | Number (0/1) |
 
-Each data point is tagged with the accessory name for easy filtering in Grafana.
+Each data point is tagged with the accessory name and a stable `accessory_id` (bridge MAC + accessory ID) for easy filtering and data continuity.
 
 ## Running as a Child Bridge
 
@@ -181,4 +176,4 @@ Apache-2.0
 
 ## Feedback & Issues
 
-Please submit any issues or feature requests to the [GitHub Issues](https://github.com/lukezbihlyj/homebridge-grafana-exporter/issues) page.
+Please submit any issues or feature requests to the [GitHub Issues](https://github.com/lukezbihlyj/homebridge-metric-exporter/issues) page.

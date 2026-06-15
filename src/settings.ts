@@ -1,3 +1,3 @@
-export const PLATFORM_NAME = 'GrafanaExporter';
+export const PLATFORM_NAME = 'MetricExporter';
 
-export const PLUGIN_NAME = 'homebridge-grafana-exporter';
+export const PLUGIN_NAME = 'homebridge-metric-exporter';

@@ -1,8 +1,8 @@
 {
-  "pluginAlias": "GrafanaExporter",
+  "pluginAlias": "MetricExporter",
   "pluginType": "platform",
   "singular": true,
-  "headerDisplay": "Export Homebridge accessory data (temperature, humidity) to Grafana-compatible data sources.",
+  "headerDisplay": "Export Homebridge accessory data (temperature, humidity) to time-series databases.",
   "footerDisplay": "InfluxDB v2, Graphite, and PostgreSQL are supported.",
   "schema": {
     "type": "object",
@@ -10,7 +10,7 @@
       "name": {
         "title": "Platform Name",
         "type": "string",
-        "default": "Grafana Exporter",
+        "default": "Metric Exporter",
         "description": "The name that will appear in the Homebridge log."
       },
       "pin": {

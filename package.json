@@ -1,8 +1,8 @@
 {
-  "name": "homebridge-grafana-exporter",
+  "name": "homebridge-metric-exporter",
   "version": "1.0.0",
-  "displayName": "Homebridge Grafana Exporter",
-  "description": "Homebridge plugin to export accessory data (temperature, humidity) to Grafana-compatible data sources (InfluxDB, Graphite, PostgreSQL).",
+  "displayName": "Homebridge Metric Exporter",
+  "description": "Homebridge plugin to export accessory data (temperature, humidity) to time-series databases (InfluxDB, Graphite, PostgreSQL).",
   "author": "Luke Zbihlyj",
   "maintainers": [
     "lukezbihlyj"
@@ -10,12 +10,12 @@
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
-    "url": "https://github.com/lukezbihlyj/homebridge-grafana-exporter.git"
+    "url": "https://github.com/lukezbihlyj/homebridge-metric-exporter.git"
   },
   "bugs": {
-    "url": "https://github.com/lukezbihlyj/homebridge-grafana-exporter/issues"
+    "url": "https://github.com/lukezbihlyj/homebridge-metric-exporter/issues"
   },
-  "homepage": "https://github.com/lukezbihlyj/homebridge-grafana-exporter#readme",
+  "homepage": "https://github.com/lukezbihlyj/homebridge-metric-exporter#readme",
   "engines": {
     "node": ">=18.0.0",
     "homebridge": ">=1.6.0"

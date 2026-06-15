@@ -43,7 +43,7 @@ const CHARACTERISTIC_MAP: Record<string, string> = {
   'On': 'on',
 };
 
-export class GrafanaExporterPlatform implements DynamicPlatformPlugin {
+export class MetricExporterPlatform implements DynamicPlatformPlugin {
   public readonly Service: typeof Service = this.api.hap.Service;
   public readonly Characteristic: typeof Characteristic = this.api.hap.Characteristic;
 
@@ -75,7 +75,7 @@ export class GrafanaExporterPlatform implements DynamicPlatformPlugin {
       this.log.info('No accessories filter configured — all discovered accessories will be exported.');
     }
 
-    this.log.info(`Initializing Grafana Exporter (datasource: ${this.datasourceType}, accessories: ${this.accessoryNames.size})`);
+    this.log.info(`Initializing Metric Exporter (datasource: ${this.datasourceType}, accessories: ${this.accessoryNames.size})`);
 
     this.api.on('didFinishLaunching', async () => {
       this.log.debug('Executed didFinishLaunching callback');
