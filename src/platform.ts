@@ -104,42 +104,30 @@ export class MetricExporterPlatform implements DynamicPlatformPlugin {
       logger: hapLogger,
       config: {
         debug: this.debug,
-        autoStartDiscovery: false,
       },
     });
 
     try {
       this.log.info('Discovering Homebridge instances via HAP...');
-      this.hapClient.startDiscovery(15);
-
-      await new Promise<void>((resolve) => {
-        const checkReady = setInterval(() => {
-          const instances = (this.hapClient as any).instances;
-          if (instances && instances.length > 0) {
-            clearInterval(checkReady);
-            resolve();
-          }
-        }, 500);
-
-        setTimeout(() => {
-          clearInterval(checkReady);
-          resolve();
-        }, 16000);
-      });
-
-      const instances = (this.hapClient as any).instances || [];
-      this.hapReady = instances.length > 0;
-      this.log.info(`HAP client ready, discovered ${instances.length} instance(s)`);
 
       this.hapClient.on('instance-discovered', () => {
-        this.log.info('New Homebridge instance discovered');
+        const instances = (this.hapClient as any).instances || [];
+        this.log.info(`Homebridge instance discovered (${instances.length} total)`);
+
         if (!this.hapReady) {
           this.hapReady = true;
           this.logDiscoveredAccessories();
         }
       });
 
-      this.logDiscoveredAccessories();
+      this.hapClient.on('discovery-ended', () => {
+        const instances = (this.hapClient as any).instances || [];
+        if (instances.length === 0) {
+          this.log.warn('HAP discovery ended with 0 instances — will retry via refreshInstances');
+        } else {
+          this.log.info(`HAP discovery complete, ${instances.length} instance(s) found`);
+        }
+      });
     } catch (error) {
       this.log.error(`HAP client discovery failed: ${error}`);
       this.hapClient = null;
@@ -247,8 +235,8 @@ export class MetricExporterPlatform implements DynamicPlatformPlugin {
       return;
     }
 
-    if (!this.hapClient || !this.hapReady) {
-      this.log.debug('HAP client not ready, skipping export');
+    if (!this.hapClient) {
+      this.log.debug('HAP client not available, skipping export');
       return;
     }
 

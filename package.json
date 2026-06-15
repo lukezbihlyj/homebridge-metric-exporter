@@ -1,6 +1,6 @@
 {
   "name": "homebridge-metric-exporter",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "displayName": "Homebridge Metric Exporter",
   "description": "Homebridge plugin to export accessory data (temperature, humidity) to time-series databases (InfluxDB, Graphite, PostgreSQL).",
   "author": "Luke Zbihlyj",
