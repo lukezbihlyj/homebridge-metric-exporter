@@ -104,6 +104,7 @@ export class MetricExporterPlatform implements DynamicPlatformPlugin {
       logger: hapLogger,
       config: {
         debug: this.debug,
+        autoStartDiscovery: false,
       },
     });
 
@@ -126,12 +127,16 @@ export class MetricExporterPlatform implements DynamicPlatformPlugin {
         }, 16000);
       });
 
-      this.hapReady = true;
       const instances = (this.hapClient as any).instances || [];
+      this.hapReady = instances.length > 0;
       this.log.info(`HAP client ready, discovered ${instances.length} instance(s)`);
 
       this.hapClient.on('instance-discovered', () => {
         this.log.info('New Homebridge instance discovered');
+        if (!this.hapReady) {
+          this.hapReady = true;
+          this.logDiscoveredAccessories();
+        }
       });
 
       this.logDiscoveredAccessories();
