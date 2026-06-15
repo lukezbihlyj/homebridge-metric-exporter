@@ -1,0 +1,264 @@
+{
+  "pluginAlias": "GrafanaExporter",
+  "pluginType": "platform",
+  "singular": true,
+  "headerDisplay": "Export Homebridge accessory data (temperature, humidity) to Grafana-compatible data sources.",
+  "footerDisplay": "InfluxDB v2, Graphite, and PostgreSQL are supported.",
+  "schema": {
+    "type": "object",
+    "properties": {
+      "name": {
+        "title": "Platform Name",
+        "type": "string",
+        "default": "Grafana Exporter",
+        "description": "The name that will appear in the Homebridge log."
+      },
+      "pin": {
+        "title": "Homebridge PIN",
+        "type": "string",
+        "default": "031-45-154",
+        "description": "The Homebridge bridge PIN used for HAP accessory discovery. Must match the pin in your bridge config."
+      },
+      "datasourceType": {
+        "title": "Data Source Type",
+        "type": "string",
+        "default": "influxdb",
+        "oneOf": [
+          { "title": "InfluxDB (v2)", "enum": ["influxdb"] },
+          { "title": "Graphite", "enum": ["graphite"] },
+          { "title": "PostgreSQL", "enum": ["postgresql"] }
+        ],
+        "description": "Select the Grafana-compatible data source to export metrics to."
+      },
+      "influxdb": {
+        "type": "object",
+        "title": "InfluxDB Configuration",
+        "properties": {
+          "url": {
+            "title": "URL",
+            "type": "string",
+            "default": "http://localhost:8086",
+            "description": "InfluxDB v2 API URL (e.g. http://localhost:8086)."
+          },
+          "token": {
+            "title": "API Token",
+            "type": "string",
+            "description": "InfluxDB v2 API token with write access."
+          },
+          "org": {
+            "title": "Organization",
+            "type": "string",
+            "default": "homebridge",
+            "description": "InfluxDB organization name."
+          },
+          "bucket": {
+            "title": "Bucket",
+            "type": "string",
+            "default": "homebridge",
+            "description": "InfluxDB bucket name to write data to."
+          },
+          "measurement": {
+            "title": "Measurement Name",
+            "type": "string",
+            "default": "homebridge",
+            "description": "InfluxDB measurement name for data points."
+          }
+        },
+        "required": ["url", "token", "org", "bucket"],
+        "condition": {
+          "functionBody": "return model.datasourceType === 'influxdb';"
+        }
+      },
+      "graphite": {
+        "type": "object",
+        "title": "Graphite Configuration",
+        "properties": {
+          "host": {
+            "title": "Host",
+            "type": "string",
+            "default": "localhost",
+            "description": "Graphite server hostname."
+          },
+          "port": {
+            "title": "Port",
+            "type": "number",
+            "default": 2003,
+            "minimum": 1,
+            "maximum": 65535,
+            "description": "Graphite plaintext protocol port (default 2003)."
+          },
+          "prefix": {
+            "title": "Metric Prefix",
+            "type": "string",
+            "default": "homebridge",
+            "description": "Prefix for all metrics (e.g. 'homebridge' produces 'homebridge.temperature')."
+          }
+        },
+        "required": ["host", "port"],
+        "condition": {
+          "functionBody": "return model.datasourceType === 'graphite';"
+        }
+      },
+      "postgresql": {
+        "type": "object",
+        "title": "PostgreSQL Configuration",
+        "properties": {
+          "host": {
+            "title": "Host",
+            "type": "string",
+            "default": "localhost",
+            "description": "PostgreSQL server hostname."
+          },
+          "port": {
+            "title": "Port",
+            "type": "number",
+            "default": 5432,
+            "minimum": 1,
+            "maximum": 65535,
+            "description": "PostgreSQL server port (default 5432)."
+          },
+          "database": {
+            "title": "Database",
+            "type": "string",
+            "default": "homebridge",
+            "description": "PostgreSQL database name."
+          },
+          "user": {
+            "title": "Username",
+            "type": "string",
+            "description": "PostgreSQL user with INSERT permissions."
+          },
+          "password": {
+            "title": "Password",
+            "type": "string",
+            "description": "PostgreSQL user password."
+          },
+          "table": {
+            "title": "Table Name",
+            "type": "string",
+            "default": "homebridge_metrics",
+            "description": "PostgreSQL table to write metrics to. Auto-created if not exists."
+          }
+        },
+        "required": ["host", "database", "user", "password"],
+        "condition": {
+          "functionBody": "return model.datasourceType === 'postgresql';"
+        }
+      },
+      "accessories": {
+        "title": "Accessory Names",
+        "type": "array",
+        "items": {
+          "title": "Name",
+          "type": "string"
+        },
+        "description": "List of Homebridge accessory names to export data from. Leave empty to export all discovered accessories. The name must match the accessory's display name exactly."
+      },
+      "pollInterval": {
+        "title": "Poll Interval (seconds)",
+        "type": "number",
+        "default": 10,
+        "minimum": 5,
+        "maximum": 300,
+        "description": "How often to read accessory values and export them (in seconds). Minimum 5 seconds."
+      },
+      "debugmode": {
+        "title": "Debug Mode",
+        "type": "boolean",
+        "default": false,
+        "description": "Enable debug logging."
+      }
+    },
+    "required": [
+      "datasourceType"
+    ]
+  },
+  "layout": [
+    {
+      "type": "fieldset",
+      "title": "Data Source",
+      "items": [
+        "datasourceType"
+      ]
+    },
+    {
+      "type": "fieldset",
+      "title": "InfluxDB",
+      "items": [
+        "influxdb.url",
+        "influxdb.token",
+        "influxdb.org",
+        "influxdb.bucket",
+        "influxdb.measurement"
+      ],
+      "condition": {
+        "functionBody": "return model.datasourceType === 'influxdb';"
+      }
+    },
+    {
+      "type": "fieldset",
+      "title": "Graphite",
+      "items": [
+        "graphite.host",
+        "graphite.port",
+        "graphite.prefix"
+      ],
+      "condition": {
+        "functionBody": "return model.datasourceType === 'graphite';"
+      }
+    },
+    {
+      "type": "fieldset",
+      "title": "PostgreSQL",
+      "items": [
+        "postgresql.host",
+        "postgresql.port",
+        "postgresql.database",
+        "postgresql.user",
+        "postgresql.password",
+        "postgresql.table"
+      ],
+      "condition": {
+        "functionBody": "return model.datasourceType === 'postgresql';"
+      }
+    },
+    {
+      "type": "fieldset",
+      "title": "Accessories",
+      "items": [
+        {
+          "key": "accessories",
+          "add": "Add Accessory",
+          "type": "array",
+          "items": [
+            {
+              "type": "div",
+              "displayFlex": true,
+              "flex-direction": "row",
+              "items": [
+                {
+                  "key": "accessories[]",
+                  "placeholder": "Accessory Name"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "help",
+          "helpvalue": "<p>Enter accessory names exactly as they appear in Homebridge. Leave empty to export all discovered accessories.</p>"
+        }
+      ]
+    },
+    {
+      "type": "fieldset",
+      "title": "Settings",
+      "items": [
+        "name",
+        "pin",
+        "pollInterval",
+        "debugmode"
+      ]
+    }
+  ]
+}
