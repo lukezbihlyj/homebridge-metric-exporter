@@ -16,7 +16,6 @@
       "pin": {
         "title": "Homebridge PIN",
         "type": "string",
-        "default": "031-45-154",
         "description": "The Homebridge bridge PIN used for HAP accessory discovery. Must match the pin in your bridge config."
       },
       "datasourceType": {

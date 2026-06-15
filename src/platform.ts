@@ -90,7 +90,7 @@ export class MetricExporterPlatform implements DynamicPlatformPlugin {
   }
 
   private async initializeHapClient(): Promise<void> {
-    const pin = this.config.pin || '031-45-154';
+    const pin = this.config.pin;
 
     const hapLogger = {
       info: (msg: string) => this.log.debug(`[HAP Client] ${msg}`),

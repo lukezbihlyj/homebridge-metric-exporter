@@ -62,6 +62,12 @@ export class PostgreSQLWriter implements DatasourceWriter {
         value DOUBLE PRECISION NOT NULL,
         tags JSONB DEFAULT '{}'
       );
+
+      CREATE INDEX IF NOT EXISTS ${this.escapeIdentifier(this.config.table + '_accessory_field_time')}
+        ON ${table} (accessory, field, timestamp);
+
+      CREATE INDEX IF NOT EXISTS ${this.escapeIdentifier(this.config.table + '_accessory_id_field_time')}
+        ON ${table} (accessory_id, field, timestamp);
     `;
 
     try {
