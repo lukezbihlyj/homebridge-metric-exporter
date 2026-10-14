@@ -68,6 +68,12 @@ export class PostgreSQLWriter implements DatasourceWriter {
 
       CREATE INDEX IF NOT EXISTS ${this.escapeIdentifier(this.config.table + '_accessory_id_field_time')}
         ON ${table} (accessory_id, field, timestamp);
+
+      CREATE INDEX IF NOT EXISTS ${this.escapeIdentifier(this.config.table + '_field_time')}
+        ON ${table} (field, timestamp);
+
+      CREATE INDEX IF NOT EXISTS ${this.escapeIdentifier(this.config.table + '_time_brin')}
+        ON ${table} USING BRIN (timestamp);
     `;
 
     try {
